@@ -1,23 +1,21 @@
-import { Button, Dropdown } from "react-bootstrap";
-import "styles/scss/app.scss";
+import { Button, Stack, Text } from "@mantine/core";
+import { useAppDispatch } from "app/hooks";
+import { toggleTheme } from "features/theme/themeSlice";
 
-function App() {
+const App = () => {
+  const dispatch = useAppDispatch();
+  const changeThemeHandler = () => dispatch(toggleTheme());
+
   return (
-    <>
-      <Button variant="primary">Hey</Button>
-      <Dropdown>
-        <Dropdown.Toggle variant="primary" id="dropdown-basic">
-          Dropdown Button
-        </Dropdown.Toggle>
-
-        <Dropdown.Menu>
-          <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-          <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-          <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </>
+    <Stack align="center" mt={50}>
+      <Text size="xl" weight={500}>
+        Welcome to Mantine!
+      </Text>
+      <Button variant="light" onClick={changeThemeHandler}>
+        Toggle Theme
+      </Button>
+    </Stack>
   );
-}
+};
 
 export default App;
