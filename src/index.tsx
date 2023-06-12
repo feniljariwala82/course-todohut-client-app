@@ -1,10 +1,11 @@
-import App from "App";
 import { store } from "app/store";
 import ThemeWrapper from "components/theme/ThemeWrapper";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
+import { RouterProvider } from "react-router-dom";
 import reportWebVitals from "reportWebVitals";
+import mainRouter from "routes/MainRouter";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -14,7 +15,7 @@ root.render(
   <StrictMode>
     <Provider store={store}>
       <ThemeWrapper>
-        <App />
+        <RouterProvider router={mainRouter} />
       </ThemeWrapper>
     </Provider>
   </StrictMode>
