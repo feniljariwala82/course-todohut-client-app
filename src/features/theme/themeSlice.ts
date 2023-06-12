@@ -1,14 +1,13 @@
-import { MantineThemeOverride } from "@mantine/core";
 import { createSlice } from "@reduxjs/toolkit";
 
 // Define a type for the slice state
 interface ThemeState {
-  theme: MantineThemeOverride;
+  theme: "light" | "dark";
 }
 
 // Define the initial state using that type
 const initialState: ThemeState = {
-  theme: { colorScheme: "dark" },
+  theme: "light",
 };
 
 export const themeSlice = createSlice({
@@ -16,10 +15,10 @@ export const themeSlice = createSlice({
   initialState,
   reducers: {
     toggleTheme: (state) => {
-      if (state.theme.colorScheme === "dark") {
-        state.theme.colorScheme = "light";
+      if (state.theme === "dark") {
+        state.theme = "light";
       } else {
-        state.theme.colorScheme = "dark";
+        state.theme = "dark";
       }
     },
   },

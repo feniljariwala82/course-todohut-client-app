@@ -1,20 +1,27 @@
-import { Button, Stack, Text } from "@mantine/core";
+import { Button, Link, Typography } from "@mui/material";
 import { useAppDispatch } from "app/hooks";
 import { toggleTheme } from "features/theme/themeSlice";
 
 const App = () => {
   const dispatch = useAppDispatch();
-  const changeThemeHandler = () => dispatch(toggleTheme());
+
+  const onThemeToggleHandler = () => dispatch(toggleTheme());
 
   return (
-    <Stack align="center" mt={50}>
-      <Text size="xl" weight={500}>
-        Welcome to Mantine!
-      </Text>
-      <Button variant="light" onClick={changeThemeHandler}>
-        Toggle Theme
+    <Typography variant="body2" color="text.secondary" align="center">
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        Your Website
+      </Link>{" "}
+      {new Date().getFullYear()}.
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={onThemeToggleHandler}
+      >
+        Outlined
       </Button>
-    </Stack>
+    </Typography>
   );
 };
 
