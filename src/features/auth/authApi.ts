@@ -8,10 +8,6 @@ const authApi = api.injectEndpoints({
         url: "login",
         method: "post",
         body: data,
-        prepareHeaders: (headers: any) => {
-          headers.set("User-Agent", "TodoHutWebApp/1.0");
-          return headers;
-        },
       }),
     }),
   }),

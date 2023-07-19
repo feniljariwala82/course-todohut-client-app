@@ -4,7 +4,11 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const api = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "http://127.0.0.1:3333/api/",
-    credentials: "include",
+    prepareHeaders: (headers) => {
+      headers.set("App-User-Agent", "TodoHutWebApp/1.0");
+      return headers;
+    },
+    credentials: "include", // This allows server to set cookies
   }),
   endpoints: (builder) => ({}),
 });
