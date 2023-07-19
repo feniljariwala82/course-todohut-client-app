@@ -9,7 +9,9 @@ const ErrorPage = () => {
       <Typography variant="h4">Oops!</Typography>
       <p>Sorry, an unexpected error has occurred.</p>
       <p>
-        <i>{error.statusText || error.message}</i>
+        <i>
+          {error.status} {error.statusText || error.message}
+        </i>
       </p>
     </Stack>
   );
