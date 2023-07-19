@@ -5,7 +5,7 @@ import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import reportWebVitals from "reportWebVitals";
-import mainRouter from "routes/MainRouter";
+import router from "routes/router";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -15,7 +15,7 @@ root.render(
   <StrictMode>
     <Provider store={store}>
       <ThemeWrapper>
-        <RouterProvider router={mainRouter} />
+        <RouterProvider router={router} />
       </ThemeWrapper>
     </Provider>
   </StrictMode>
