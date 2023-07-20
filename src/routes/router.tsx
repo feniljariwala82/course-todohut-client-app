@@ -16,14 +16,6 @@ const Router = createBrowserRouter([
       {
         index: true,
         element: (
-          <RequireAuth>
-            <TasksIndexPage />
-          </RequireAuth>
-        ),
-      },
-      {
-        path: "login",
-        element: (
           <IsGuest>
             <LoginPage />
           </IsGuest>

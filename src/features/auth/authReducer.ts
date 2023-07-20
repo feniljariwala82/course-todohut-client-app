@@ -1,9 +1,13 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface UserType {
-  firstName: string;
-  lastName: string;
+  id: number;
   email: string;
+  first_name: string;
+  last_name: string;
+  remember_me_token: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 // Define a type for the slice state
@@ -22,17 +26,20 @@ export const themeSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    login: (state, { payload }: PayloadAction<UserType>) => {
-      state.user = payload;
+    login: (state) => {
       state.isLoggedIn = true;
     },
     logout: (state) => {
       state.user = undefined;
       state.isLoggedIn = false;
     },
+    setUser: (state, { payload }: PayloadAction<UserType>) => {
+      state.isLoggedIn = true;
+      state.user = payload;
+    },
   },
 });
 
-export const { login, logout } = themeSlice.actions;
+export const { login, logout, setUser } = themeSlice.actions;
 
 export default themeSlice.reducer;

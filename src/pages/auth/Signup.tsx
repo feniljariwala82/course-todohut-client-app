@@ -104,7 +104,7 @@ const Signup = () => {
               type="button"
               variant="outlined"
               color="secondary"
-              onClick={() => navigate("/login", { replace: true })}
+              onClick={() => navigate("/", { replace: true })}
             >
               Login
             </Button>

@@ -18,9 +18,11 @@ import {
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import { useAppDispatch, useAppSelector } from "app/hooks";
+import { useGetUserQuery, useLogoutMutation } from "features/auth/authApi";
 import { toggleTheme } from "features/theme/themeReducer";
 import * as React from "react";
 import { Outlet } from "react-router-dom";
+import { setUser } from "features/auth/authReducer";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -65,6 +67,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function PrimarySearchAppBar() {
   const dispatch = useAppDispatch();
   const { theme } = useAppSelector((state) => state.theme);
+  const [logout] = useLogoutMutation();
+  const { data, isLoading, isError } = useGetUserQuery("User");
+
+  React.useEffect(() => {
+    if (!isLoading && !isError) {
+      dispatch(setUser(data));
+    }
+  }, [isLoading, isError]);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -87,6 +97,10 @@ export default function PrimarySearchAppBar() {
   };
 
   const toggleThemeHandler = () => dispatch(toggleTheme());
+
+  const logoutHandler = async () => {
+    await logout("logout").unwrap();
+  };
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -132,7 +146,7 @@ export default function PrimarySearchAppBar() {
         </IconButton>
         <p>Create</p>
       </MenuItem>
-      <MenuItem>
+      <MenuItem onClick={logoutHandler}>
         <IconButton
           size="large"
           aria-label="show 17 new notifications"
@@ -193,6 +207,7 @@ export default function PrimarySearchAppBar() {
                 aria-controls={menuId}
                 aria-haspopup="true"
                 color="inherit"
+                onClick={logoutHandler}
               >
                 <Logout />
               </IconButton>

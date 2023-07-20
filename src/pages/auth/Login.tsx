@@ -6,7 +6,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useAppDispatch } from "app/hooks";
 import { useLoginMutation } from "features/auth/authApi";
+import { login as loginAction } from "features/auth/authReducer";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -21,16 +23,23 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [login, { isLoading, error, isError }] = useLoginMutation();
-  const formik = useFormik({
+  const formik: any = useFormik({
     initialValues: {
       email: "fenil@email.com",
       password: "12345678",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      login(values);
+    onSubmit: async (values) => {
+      try {
+        await login(values).unwrap();
+        dispatch(loginAction());
+        navigate("tasks");
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
 
