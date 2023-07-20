@@ -11,18 +11,20 @@ interface UserType {
 }
 
 // Define a type for the slice state
-interface ThemeState {
+interface AuthState {
+  isLoading: boolean;
   isLoggedIn: boolean;
   user?: UserType;
 }
 
 // Define the initial state using that type
-const initialState: ThemeState = {
+const initialState: AuthState = {
+  isLoading: true,
   isLoggedIn: false,
   user: undefined,
 };
 
-export const themeSlice = createSlice({
+export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
@@ -37,9 +39,12 @@ export const themeSlice = createSlice({
       state.isLoggedIn = true;
       state.user = payload;
     },
+    setLoading: (state, { payload }: PayloadAction<boolean>) => {
+      state.isLoading = payload;
+    },
   },
 });
 
-export const { login, logout, setUser } = themeSlice.actions;
+export const { login, logout, setUser, setLoading } = authSlice.actions;
 
-export default themeSlice.reducer;
+export default authSlice.reducer;

@@ -19,10 +19,10 @@ import {
 import { alpha, styled } from "@mui/material/styles";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { useGetUserQuery, useLogoutMutation } from "features/auth/authApi";
+import { setLoading, setUser } from "features/auth/authSlice";
 import { toggleTheme } from "features/theme/themeReducer";
 import * as React from "react";
 import { Outlet } from "react-router-dom";
-import { setUser } from "features/auth/authReducer";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -73,6 +73,9 @@ export default function PrimarySearchAppBar() {
   React.useEffect(() => {
     if (!isLoading && !isError) {
       dispatch(setUser(data));
+      dispatch(setLoading(false));
+    } else if (isError) {
+      dispatch(setLoading(false));
     }
   }, [isLoading, isError]);
 

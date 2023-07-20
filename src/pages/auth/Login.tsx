@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useAppDispatch } from "app/hooks";
 import { useLoginMutation } from "features/auth/authApi";
-import { login as loginAction } from "features/auth/authReducer";
+import { login as loginAction } from "features/auth/authSlice";
 import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";

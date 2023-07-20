@@ -20,7 +20,7 @@ const initialState: ThemeState = {
   tasks: [],
 };
 
-export const themeSlice = createSlice({
+export const tasksSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
@@ -30,6 +30,6 @@ export const themeSlice = createSlice({
   },
 });
 
-export const { setTasks } = themeSlice.actions;
+export const { setTasks } = tasksSlice.actions;
 
-export default themeSlice.reducer;
+export default tasksSlice.reducer;

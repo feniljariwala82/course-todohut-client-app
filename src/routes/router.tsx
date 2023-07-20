@@ -5,6 +5,7 @@ import LoginPage from "pages/auth/Login";
 import SignupPage from "pages/auth/Signup";
 import ErrorIndexPage from "pages/errors/Index";
 import TasksIndexPage from "pages/tasks/Index";
+import TasksShowPage from "pages/tasks/Show";
 import { createBrowserRouter } from "react-router-dom";
 
 const Router = createBrowserRouter([
@@ -34,7 +35,19 @@ const Router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <TasksIndexPage />,
+            element: (
+              <RequireAuth>
+                <TasksIndexPage />
+              </RequireAuth>
+            ),
+          },
+          {
+            path: ":id",
+            element: (
+              <RequireAuth>
+                <TasksShowPage />
+              </RequireAuth>
+            ),
           },
         ],
       },

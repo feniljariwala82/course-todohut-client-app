@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "features/apiSlice";
-import authReducer from "features/auth/authReducer";
+import authReducer from "features/auth/authSlice";
 import themeReducer from "features/theme/themeReducer";
 
 export const store = configureStore({

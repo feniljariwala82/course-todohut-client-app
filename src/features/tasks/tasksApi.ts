@@ -8,7 +8,13 @@ const authApi = api.injectEndpoints({
         method: "GET",
       }),
     }),
+    show: builder.query({
+      query: (id?: string) => ({
+        url: `tasks/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useIndexQuery } = authApi;
+export const { useIndexQuery, useShowQuery } = authApi;
