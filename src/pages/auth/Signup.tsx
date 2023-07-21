@@ -1,6 +1,16 @@
-import { Button, Container, Grid, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useSignupMutation } from "features/auth/authApi";
 import { useFormik } from "formik";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import parseFormErrors from "utils/errors/parseFormErrors";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
@@ -20,7 +30,11 @@ const validationSchema = Yup.object({
 
 const Signup = () => {
   const navigate = useNavigate();
-
+  const [signup, { isLoading }] = useSignupMutation();
+  // states
+  const [error, setError] = useState("");
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  // form validation
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -28,9 +42,19 @@ const Signup = () => {
       firstName: "",
       lastName: "",
     },
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        await signup(values).unwrap();
+        navigate("/");
+      } catch (error: any) {
+        if (error.data.errors) {
+          const errors = parseFormErrors(error.data.errors);
+          setFormErrors(errors);
+        } else {
+          setError(error.data);
+        }
+      }
     },
   });
 
@@ -41,6 +65,15 @@ const Signup = () => {
           <Typography variant="h4" gutterBottom>
             Signup
           </Typography>
+
+          {error ? (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          ) : (
+            <></>
+          )}
+
           <form onSubmit={formik.handleSubmit}>
             <TextField
               label="First Name"
@@ -54,9 +87,14 @@ const Signup = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={
-                formik.touched.firstName && Boolean(formik.errors.firstName)
+                (formik.touched.firstName &&
+                  Boolean(formik.errors.firstName)) ||
+                Boolean(formErrors.firstName)
               }
-              helperText={formik.touched.firstName && formik.errors.firstName}
+              helperText={
+                (formik.touched.firstName && formik.errors.firstName) ||
+                formErrors.firstName
+              }
             />
             <TextField
               label="Last Name"
@@ -68,8 +106,14 @@ const Signup = () => {
               required
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.lastName && Boolean(formik.errors.lastName)}
-              helperText={formik.touched.lastName && formik.errors.lastName}
+              error={
+                (formik.touched.lastName && Boolean(formik.errors.lastName)) ||
+                Boolean(formErrors.lastName)
+              }
+              helperText={
+                (formik.touched.lastName && formik.errors.lastName) ||
+                formErrors.lastName
+              }
             />
             <TextField
               label="Email"
@@ -81,8 +125,14 @@ const Signup = () => {
               required
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
+              error={
+                (formik.touched.email && Boolean(formik.errors.email)) ||
+                Boolean(formErrors.email)
+              }
+              helperText={
+                (formik.touched.email && formik.errors.email) ||
+                formErrors.email
+              }
             />
             <TextField
               label="Password"
@@ -94,16 +144,28 @@ const Signup = () => {
               required
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
+              error={
+                (formik.touched.password && Boolean(formik.errors.password)) ||
+                Boolean(formErrors.password)
+              }
+              helperText={
+                (formik.touched.password && formik.errors.password) ||
+                formErrors.password
+              }
             />
-            <Button type="submit" variant="contained" sx={{ mr: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isLoading}
+              sx={{ mr: 2 }}
+            >
               Signup
             </Button>
             <Button
               type="button"
               variant="outlined"
               color="secondary"
+              disabled={isLoading}
               onClick={() => navigate("/", { replace: true })}
             >
               Login

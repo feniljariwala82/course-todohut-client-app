@@ -10,7 +10,9 @@ import { useAppDispatch } from "app/hooks";
 import { useLoginMutation } from "features/auth/authApi";
 import { login as loginAction } from "features/auth/authSlice";
 import { useFormik } from "formik";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import parseFormErrors from "utils/errors/parseFormErrors";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object({
@@ -25,20 +27,28 @@ const validationSchema = Yup.object({
 const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [login, { isLoading, error, isError }] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
+  // states
+  const [error, setError] = useState("");
+  const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
+  // form validation
   const formik: any = useFormik({
     initialValues: {
       email: "fenil@email.com",
       password: "12345678",
     },
-    validationSchema: validationSchema,
+    validationSchema,
     onSubmit: async (values) => {
       try {
         await login(values).unwrap();
         dispatch(loginAction());
-        navigate("tasks");
-      } catch (error) {
-        console.error(error);
+      } catch (error: any) {
+        if (error.data.errors) {
+          const errors = parseFormErrors(error.data.errors);
+          setFormErrors(errors);
+        } else {
+          setError(error.data);
+        }
       }
     },
   });
@@ -51,11 +61,9 @@ const Login = () => {
             Login
           </Typography>
 
-          {/* @ts-ignore */}
-          {isError ? (
+          {error ? (
             <Alert severity="error" sx={{ mb: 2 }}>
-              {/* @ts-ignore */}
-              {error.data}
+              {error}
             </Alert>
           ) : (
             <></>
@@ -73,8 +81,14 @@ const Login = () => {
               defaultValue={"fenil@email.com"}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
+              error={
+                (formik.touched.email && Boolean(formik.errors.email)) ||
+                Boolean(formErrors.email)
+              }
+              helperText={
+                (formik.touched.email && formik.errors.email) ||
+                formErrors.email
+              }
             />
             <TextField
               label="Password"
@@ -87,8 +101,14 @@ const Login = () => {
               defaultValue={"12345678"}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.password && Boolean(formik.errors.password)}
-              helperText={formik.touched.password && formik.errors.password}
+              error={
+                (formik.touched.password && Boolean(formik.errors.password)) ||
+                Boolean(formErrors.password)
+              }
+              helperText={
+                (formik.touched.password && formik.errors.password) ||
+                formErrors.password
+              }
             />
             <Button
               type="submit"

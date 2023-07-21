@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import reportWebVitals from "reportWebVitals";
 import router from "routes/router";
+import "styles/app.scss";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

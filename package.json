@@ -31,7 +31,7 @@
     "build": "yarn typecheck && GENERATE_SOURCEMAP=false react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "serve": "rm -r build && yarn build && serve -s build",
+    "serve": "rm -rf build && yarn build && serve -s build",
     "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {
@@ -55,6 +55,7 @@
   "devDependencies": {
     "babel-plugin-import": "^1.13.6",
     "customize-cra": "^1.0.0",
-    "react-app-rewired": "^2.2.1"
+    "react-app-rewired": "^2.2.1",
+    "sass": "^1.64.0"
   }
 }

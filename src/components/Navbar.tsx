@@ -19,10 +19,14 @@ import {
 import { alpha, styled } from "@mui/material/styles";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { useGetUserQuery, useLogoutMutation } from "features/auth/authApi";
-import { setLoading, setUser } from "features/auth/authSlice";
+import {
+  logout as logoutAction,
+  setLoading,
+  setUser,
+} from "features/auth/authSlice";
 import { toggleTheme } from "features/theme/themeReducer";
 import * as React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -65,6 +69,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar() {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { theme } = useAppSelector((state) => state.theme);
   const [logout] = useLogoutMutation();
@@ -77,7 +82,7 @@ export default function PrimarySearchAppBar() {
     } else if (isError) {
       dispatch(setLoading(false));
     }
-  }, [isLoading, isError]);
+  }, [isLoading, isError, dispatch]);
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -103,7 +108,11 @@ export default function PrimarySearchAppBar() {
 
   const logoutHandler = async () => {
     await logout("logout").unwrap();
+    dispatch(logoutAction());
+    navigate("/");
   };
+
+  const redirectToCreateHandler = () => navigate("/tasks/create");
 
   const menuId = "primary-search-account-menu";
   const renderMenu = (
@@ -143,7 +152,7 @@ export default function PrimarySearchAppBar() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
+      <MenuItem onClick={redirectToCreateHandler}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <AddCircle />
         </IconButton>
@@ -180,8 +189,11 @@ export default function PrimarySearchAppBar() {
               variant="h6"
               noWrap
               component="div"
-              sx={{ display: { xs: "none", sm: "block" } }}
+              sx={{ display: { xs: "none", sm: "block" }, cursor: "pointer" }}
               fontWeight="bold"
+              onClick={() => {
+                navigate("/tasks");
+              }}
             >
               Todohut
             </Typography>
@@ -200,6 +212,7 @@ export default function PrimarySearchAppBar() {
                 size="large"
                 aria-label="show 4 new mails"
                 color="inherit"
+                onClick={redirectToCreateHandler}
               >
                 <AddCircle />
               </IconButton>

@@ -1,11 +1,18 @@
 import { api } from "features/apiSlice";
-import { LoginFormBody } from "types";
+import { LoginFormBody, SignupFormBody } from "types";
 
 const authApi = api.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (data: LoginFormBody) => ({
         url: "login",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    signup: builder.mutation({
+      query: (data: SignupFormBody) => ({
+        url: "signup",
         method: "POST",
         body: data,
       }),
@@ -25,4 +32,9 @@ const authApi = api.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useGetUserQuery } = authApi;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useGetUserQuery,
+  useSignupMutation,
+} = authApi;
