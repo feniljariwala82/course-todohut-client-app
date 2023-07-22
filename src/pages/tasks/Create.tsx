@@ -12,8 +12,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { showToast } from "components/Toast";
 import { useStoreMutation } from "features/tasks/tasksApi";
-import { useFormik } from "formik";
+import { Formik } from "formik";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import parseFormErrors from "utils/errors/parseFormErrors";
@@ -35,28 +36,22 @@ const Create = () => {
   // states
   const [error, setError] = useState("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-  // form validation
-  const formik: any = useFormik({
-    initialValues: {
-      title: "",
-      description: "",
-      priority: "",
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      try {
-        await store(values).unwrap();
-        navigate("/tasks");
-      } catch (error: any) {
-        if (error.data.errors) {
-          const errors = parseFormErrors(error.data.errors);
-          setFormErrors(errors);
-        } else {
-          setError(error.data);
-        }
+
+  // on submit handler
+  const onFormSubmitHandler = async (values: any) => {
+    try {
+      const { message } = await store(values).unwrap();
+      showToast(message, "success");
+      navigate("/tasks");
+    } catch (error: any) {
+      if (error.data.errors) {
+        const errors = parseFormErrors(error.data.errors);
+        setFormErrors(errors);
+      } else {
+        setError(error.data);
       }
-    },
-  });
+    }
+  };
 
   return (
     <Container>
@@ -79,80 +74,105 @@ const Create = () => {
             <></>
           )}
 
-          <form onSubmit={formik.handleSubmit}>
-            <TextField
-              label="Title"
-              variant="filled"
-              type="text"
-              name="title"
-              sx={{ mb: 2 }}
-              fullWidth
-              required
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                (formik.touched.title && Boolean(formik.errors.title)) ||
-                Boolean(formErrors.title)
-              }
-              helperText={
-                (formik.touched.title && formik.errors.title) ||
-                formErrors.title
-              }
-            />
-            <TextField
-              label="Description"
-              variant="filled"
-              type="text"
-              name="description"
-              multiline
-              rows={4}
-              sx={{ mb: 2 }}
-              fullWidth
-              required
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                (formik.touched.description &&
-                  Boolean(formik.errors.description)) ||
-                Boolean(formErrors.description)
-              }
-              helperText={
-                (formik.touched.description && formik.errors.description) ||
-                formErrors.description
-              }
-            />
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Priority</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                label="priority"
-                name="priority"
-                required
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={
-                  (formik.touched.priority &&
-                    Boolean(formik.errors.priority)) ||
-                  Boolean(formErrors.priority)
-                }
-                sx={{ mb: 2 }}
-              >
-                <MenuItem value={"important"}>Important</MenuItem>
-                <MenuItem value={"unimportant"}>Unimportant</MenuItem>
-                <MenuItem value={"future_scope"}>Future Scope</MenuItem>
-                <MenuItem value={"urgent"}>Urgent</MenuItem>
-              </Select>
-            </FormControl>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ mr: 2 }}
-              disabled={isLoading}
-              endIcon={<AddCircle />}
-            >
-              Create
-            </Button>
-          </form>
+          {/* form starts */}
+          <Formik
+            initialValues={{
+              title: "",
+              description: "",
+              priority: "",
+            }}
+            validationSchema={validationSchema}
+            onSubmit={onFormSubmitHandler}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+              /* and other goodies */
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  label="Title"
+                  variant="filled"
+                  type="title"
+                  name="title"
+                  sx={{ mb: 2 }}
+                  fullWidth
+                  required
+                  defaultValue={values.title}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={
+                    (touched.title && Boolean(errors.title)) ||
+                    Boolean(formErrors.title)
+                  }
+                  helperText={
+                    (touched.title && errors.title) || formErrors.title
+                  }
+                />
+                <TextField
+                  label="Description"
+                  variant="filled"
+                  type="text"
+                  name="description"
+                  multiline
+                  rows={4}
+                  sx={{ mb: 2 }}
+                  fullWidth
+                  required
+                  defaultValue={values.description}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={
+                    (touched.description && Boolean(errors.description)) ||
+                    Boolean(formErrors.description)
+                  }
+                  helperText={
+                    (touched.description && errors.description) ||
+                    formErrors.description
+                  }
+                />
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">
+                    Priority
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    label="priority"
+                    name="priority"
+                    sx={{ mb: 2 }}
+                    required
+                    defaultValue={values.priority}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={
+                      (touched.priority && Boolean(errors.priority)) ||
+                      Boolean(formErrors.priority)
+                    }
+                  >
+                    <MenuItem value={"important"}>Important</MenuItem>
+                    <MenuItem value={"unimportant"}>Unimportant</MenuItem>
+                    <MenuItem value={"future_scope"}>Future Scope</MenuItem>
+                    <MenuItem value={"urgent"}>Urgent</MenuItem>
+                  </Select>
+                </FormControl>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ mr: 2 }}
+                  disabled={isLoading || isSubmitting}
+                  endIcon={<AddCircle />}
+                >
+                  Create
+                </Button>
+              </form>
+            )}
+          </Formik>
+          {/* form ends */}
         </Grid>
       </Grid>
     </Container>

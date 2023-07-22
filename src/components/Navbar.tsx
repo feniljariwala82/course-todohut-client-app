@@ -81,6 +81,8 @@ export default function PrimarySearchAppBar() {
       dispatch(setLoading(false));
     } else if (isError) {
       dispatch(setLoading(false));
+      dispatch(logoutAction());
+      navigate("/");
     }
   }, [isLoading, isError, dispatch]);
 

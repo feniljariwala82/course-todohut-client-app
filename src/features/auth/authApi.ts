@@ -22,6 +22,7 @@ const authApi = api.injectEndpoints({
         url: "logout",
         method: "POST",
       }),
+      invalidatesTags: ["Task"],
     }),
     getUser: builder.query({
       query: () => ({

@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useSignupMutation } from "features/auth/authApi";
-import { useFormik } from "formik";
+import { Formik } from "formik";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import parseFormErrors from "utils/errors/parseFormErrors";
@@ -34,29 +34,21 @@ const Signup = () => {
   // states
   const [error, setError] = useState("");
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
-  // form validation
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-      firstName: "",
-      lastName: "",
-    },
-    validationSchema,
-    onSubmit: async (values) => {
-      try {
-        await signup(values).unwrap();
-        navigate("/");
-      } catch (error: any) {
-        if (error.data.errors) {
-          const errors = parseFormErrors(error.data.errors);
-          setFormErrors(errors);
-        } else {
-          setError(error.data);
-        }
+
+  // on submit handler
+  const onFormSubmitHandler = async (values: any) => {
+    try {
+      await signup(values).unwrap();
+      navigate("/");
+    } catch (error: any) {
+      if (error.data.errors) {
+        const errors = parseFormErrors(error.data.errors);
+        setFormErrors(errors);
+      } else {
+        setError(error.data);
       }
-    },
-  });
+    }
+  };
 
   return (
     <Container>
@@ -74,103 +66,126 @@ const Signup = () => {
             <></>
           )}
 
-          <form onSubmit={formik.handleSubmit}>
-            <TextField
-              label="First Name"
-              variant="filled"
-              type="text"
-              name="firstName"
-              sx={{ mb: 2 }}
-              fullWidth
-              required
-              value={formik.values.firstName}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                (formik.touched.firstName &&
-                  Boolean(formik.errors.firstName)) ||
-                Boolean(formErrors.firstName)
-              }
-              helperText={
-                (formik.touched.firstName && formik.errors.firstName) ||
-                formErrors.firstName
-              }
-            />
-            <TextField
-              label="Last Name"
-              variant="filled"
-              type="text"
-              name="lastName"
-              sx={{ mb: 2 }}
-              fullWidth
-              required
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                (formik.touched.lastName && Boolean(formik.errors.lastName)) ||
-                Boolean(formErrors.lastName)
-              }
-              helperText={
-                (formik.touched.lastName && formik.errors.lastName) ||
-                formErrors.lastName
-              }
-            />
-            <TextField
-              label="Email"
-              variant="filled"
-              type="email"
-              name="email"
-              sx={{ mb: 2 }}
-              fullWidth
-              required
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                (formik.touched.email && Boolean(formik.errors.email)) ||
-                Boolean(formErrors.email)
-              }
-              helperText={
-                (formik.touched.email && formik.errors.email) ||
-                formErrors.email
-              }
-            />
-            <TextField
-              label="Password"
-              variant="filled"
-              type="password"
-              name="password"
-              sx={{ mb: 2 }}
-              fullWidth
-              required
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                (formik.touched.password && Boolean(formik.errors.password)) ||
-                Boolean(formErrors.password)
-              }
-              helperText={
-                (formik.touched.password && formik.errors.password) ||
-                formErrors.password
-              }
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={isLoading}
-              sx={{ mr: 2 }}
-            >
-              Signup
-            </Button>
-            <Button
-              type="button"
-              variant="outlined"
-              color="secondary"
-              disabled={isLoading}
-              onClick={() => navigate("/", { replace: true })}
-            >
-              Login
-            </Button>
-          </form>
+          {/* form starts */}
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+              firstName: "",
+              lastName: "",
+            }}
+            validationSchema={validationSchema}
+            onSubmit={onFormSubmitHandler}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+              /* and other goodies */
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <TextField
+                  label="First Name"
+                  variant="filled"
+                  type="text"
+                  name="firstName"
+                  sx={{ mb: 2 }}
+                  fullWidth
+                  required
+                  defaultValue={values.firstName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={
+                    (touched.firstName && Boolean(errors.firstName)) ||
+                    Boolean(formErrors.firstName)
+                  }
+                  helperText={
+                    (touched.firstName && errors.firstName) ||
+                    formErrors.firstName
+                  }
+                />
+                <TextField
+                  label="Last Name"
+                  variant="filled"
+                  type="text"
+                  name="lastName"
+                  sx={{ mb: 2 }}
+                  fullWidth
+                  required
+                  defaultValue={values.lastName}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={
+                    (touched.lastName && Boolean(errors.lastName)) ||
+                    Boolean(formErrors.lastName)
+                  }
+                  helperText={
+                    (touched.lastName && errors.lastName) || formErrors.lastName
+                  }
+                />
+                <TextField
+                  label="Email"
+                  variant="filled"
+                  type="email"
+                  name="email"
+                  sx={{ mb: 2 }}
+                  fullWidth
+                  required
+                  defaultValue={values.email}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={
+                    (touched.email && Boolean(errors.email)) ||
+                    Boolean(formErrors.email)
+                  }
+                  helperText={
+                    (touched.email && errors.email) || formErrors.email
+                  }
+                />
+                <TextField
+                  label="Password"
+                  variant="filled"
+                  type="password"
+                  name="password"
+                  sx={{ mb: 2 }}
+                  fullWidth
+                  required
+                  defaultValue={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={
+                    (touched.password && Boolean(errors.password)) ||
+                    Boolean(formErrors.password)
+                  }
+                  helperText={
+                    (touched.password && errors.password) || formErrors.password
+                  }
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isLoading || isSubmitting}
+                  sx={{ mr: 2 }}
+                >
+                  Signup
+                </Button>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  color="secondary"
+                  disabled={isLoading || isSubmitting}
+                  onClick={() => navigate("/", { replace: true })}
+                >
+                  Login
+                </Button>
+              </form>
+            )}
+          </Formik>
+          {/* form ends */}
         </Grid>
       </Grid>
     </Container>

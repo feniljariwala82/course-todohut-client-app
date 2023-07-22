@@ -9,7 +9,7 @@ const authApi = api.injectEndpoints({
         url: "tasks",
         method: "GET",
       }),
-      providesTags: ["Task"],
+      providesTags: () => [{ type: "Task", id: "LIST" }],
     }),
 
     // store
@@ -19,7 +19,7 @@ const authApi = api.injectEndpoints({
         method: "POST",
         body: task,
       }),
-      invalidatesTags: ["Task"],
+      invalidatesTags: () => [{ type: "Task", id: "LIST" }],
     }),
 
     // show
@@ -40,7 +40,7 @@ const authApi = api.injectEndpoints({
       }),
       invalidatesTags: (result, error, updatedTask) => [
         { type: "Task", id: updatedTask.id },
-        { type: "Task", id: "LIST" }, // Invalidate the book list
+        { type: "Task", id: "LIST" }, // Invalidate the task list
       ],
     }),
 
@@ -52,7 +52,7 @@ const authApi = api.injectEndpoints({
       }),
       invalidatesTags: (result, error, id) => [
         { type: "Task", id },
-        { type: "Task", id: "LIST" }, // Invalidate the book list
+        { type: "Task", id: "LIST" }, // Invalidate the task list
       ],
     }),
   }),
@@ -63,5 +63,5 @@ export const {
   useShowQuery,
   useStoreMutation,
   useUpdateMutation,
-  useDestroyMutation,
+   useDestroyMutation,
 } = authApi;
