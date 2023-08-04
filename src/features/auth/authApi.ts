@@ -9,6 +9,7 @@ const authApi = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: () => [{ type: "Task", id: "LIST" }],
     }),
     signup: builder.mutation({
       query: (data: SignupFormBody) => ({
